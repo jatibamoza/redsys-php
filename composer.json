@@ -1,5 +1,6 @@
 {
   "name": "javier/redsys-test",
-  "description": "Pruebas Redsys en PHP",
+  "description": "Ejemplo de integración RedSys desplegado en Render.com",
+  "type": "project",
   "require": {}
 }
