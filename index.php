@@ -1,5 +1,4 @@
 <?php
-<?php
 echo "<h1>Servidor Redsys Test</h1>";
 echo "<ul>";
 echo "<li><a href='ejemploGeneraPet.php'>Generar parámetros</a></li>";
