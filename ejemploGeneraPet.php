@@ -1,7 +1,9 @@
 <?php
 
+require_once __DIR__ . '/utils.php';
+require_once __DIR__ . '/signature.php';
 // Se incluye la librería
-include 'signatureUtils/signature.php';
+include 'signature.php';
 
 //Datos de configuración
 $version = "HMAC_SHA512_V2";

@@ -1,6 +1,9 @@
 <?php
 
-include 'signatureUtils/signature.php';
+require_once __DIR__ . '/utils.php';
+require_once __DIR__ . '/signature.php';
+
+include 'signature.php';
 
 $jsonParams = json_decode(file_get_contents('php://input'), true);
 $receivedParams = array_merge($_GET, $_POST, is_array($jsonParams) ? $jsonParams : []);
