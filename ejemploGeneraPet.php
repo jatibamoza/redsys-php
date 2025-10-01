@@ -15,7 +15,7 @@ $terminal = "1";
 $moneda = "978";
 $transactionType = "0";
 $url = ""; // URL para recibir notificaciones del pago
-$order = time();
+$order = "251001071352";//time();
 $amount = "2378";//JATC: 145
 
 $currentUrl = Utils::getCurrentUrl();
