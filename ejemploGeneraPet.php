@@ -20,8 +20,9 @@ $amount = "2378";//JATC: 145
 
 $currentUrl = Utils::getCurrentUrl();
 $pos = strpos($currentUrl, basename(__FILE__));
-$urlOKKO = substr($currentUrl, 0, $pos) . "ejemploRecepcionaPet.php";
-
+//$urlOKKO = substr($currentUrl, 0, $pos) . "ejemploRecepcionaPet.php";
+$urlOKKO1 = "https://laliga--uat.sandbox.my.site.com/services/apexrest/RedsysNotification"; 
+$urlOKKO2 = "https://laliga--uat.sandbox.my.site.com/latiendadelequipo/s/pago-exitoso";
 // Se Rellenan los campos
 $data = array(
 	"DS_MERCHANT_AMOUNT" => $amount,
@@ -31,8 +32,8 @@ $data = array(
 	"DS_MERCHANT_TRANSACTIONTYPE" => $transactionType,
 	"DS_MERCHANT_TERMINAL" => $terminal,
 	"DS_MERCHANT_MERCHANTURL" => $url,
-	"DS_MERCHANT_URLOK" => $urlOKKO,
-	"DS_MERCHANT_URLKO" => $urlOKKO
+	"DS_MERCHANT_URLOK" => $urlOKKO1,
+	"DS_MERCHANT_URLKO" => $urlOKKO2
 );
 
 // Se generan los parámetros de la petición
