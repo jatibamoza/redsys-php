@@ -5,16 +5,18 @@ require_once __DIR__ . '/signature.php';
 
 //Datos de configuración
 $version = "HMAC_SHA512_V2";
-$kc = 'sq7HjrUOBfKmC576ILgskD5srU870gJ7'; //Clave recuperada de CANALES
+//$kc = 'sq7HjrUOBfKmC576ILgskD5srU870gJ7'; //Clave recuperada de CANALES. JATC: EJEMPLO
+$kc = 'sq7HjrUOBfKmC576ILgskD5srU870gJ7';
 
 // Valores de entrada que no hemos cmbiado para ningun ejemplo
-$fuc = "999008881";
+//$fuc = "999008881"; //JATC: EJEMPLO
+$fuc = "005847462";
 $terminal = "1";
 $moneda = "978";
 $transactionType = "0";
 $url = ""; // URL para recibir notificaciones del pago
 $order = time();
-$amount = "145";
+$amount = "2378";//JATC: 145
 
 $currentUrl = Utils::getCurrentUrl();
 $pos = strpos($currentUrl, basename(__FILE__));
