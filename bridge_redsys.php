@@ -115,7 +115,7 @@ if ($hasDsKeys) {
 }
 
 // Validación mínima
-$required = ['DS_MERCHANT_AMOUNT','DS_MERCHANT_ORDER','DS_MERCHANT_MERCHANTCODE','DS_MERCHANT_CURRENCY','DS_MERCHANT_TRANSACTIONTYPE','DS_MERCHANT_TERMINAL'];
+$required = ['DS_MERCHANT_AMOUNT','DS_MERCHANT_ORDER','DS_MERCHANT_MERCHANTCODE'];
 foreach ($required as $req) {
     if (empty($mapped[$req])) {
         http_response_code(400);
