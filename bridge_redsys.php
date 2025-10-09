@@ -125,7 +125,7 @@ foreach ($required as $req) {
 }
 
 // Construye un POST auto-enviado hacia generaPet.php
-$target = 'generaPet.php'; // ajusta el path si va en subcarpeta
+$target = 'generarPet.php'; // ajusta el path si va en subcarpeta
 
 ?>
 <!doctype html>
