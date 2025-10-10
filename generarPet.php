@@ -53,7 +53,7 @@ $target = 'https://sis-t.redsys.es:25443/sis/realizarPago';
 		<input type="submit" value="Enviar" >
         -->
         <?php
-            foreach ($mapped as $k => $v) {
+            foreach ($data as $k => $v) {
                 $name = htmlspecialchars($k, ENT_QUOTES, 'UTF-8');
                 $value = htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
                 echo '<input type="hidden" name="'.$name.'" value="'.$value.'">', PHP_EOL;
