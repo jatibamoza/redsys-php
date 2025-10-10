@@ -67,7 +67,7 @@ $target = 'https://sis-t.redsys.es:25443/sis/realizarPago';
         <script>
             (function(){
             try {
-                document.getElementById('fwd').submit();
+                document.getElementById('frm').submit();
             } catch (e) {
                 // Si algo falla, deja el botón del <noscript>
                 console.warn('Auto-submit falló:', e);
