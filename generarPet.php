@@ -46,12 +46,6 @@ $target = 'https://sis-t.redsys.es:25443/sis/realizarPago';
 	<body>
         <!-- JATC: se elimina el tag target="_blank" -->
 		<form name="frm" action="<?php echo htmlspecialchars($target, ENT_QUOTES, 'UTF-8'); ?>" method="POST" accept-charset="UTF-8">
-		<!--
-        Ds_Merchant_SignatureVersion <input type="text" name="Ds_SignatureVersion" value="<?php echo $version; ?>"/></br>
-		Ds_Merchant_MerchantParameters <input type="text" name="Ds_MerchantParameters" value="<?php echo $params; ?>"/></br>
-		Ds_Merchant_Signature <input type="text" name="Ds_Signature" value="<?php echo $signature; ?>"/></br>
-		<input type="submit" value="Enviar" >
-        -->
         <?php
             foreach ($data as $k => $v) {
                 $name = htmlspecialchars($k, ENT_QUOTES, 'UTF-8');
