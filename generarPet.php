@@ -14,13 +14,14 @@ $ds = [
     'DS_MERCHANT_MERCHANTURL'     => $_POST['DS_MERCHANT_MERCHANTURL']     ?? null,
     'DS_MERCHANT_URLOK'           => $_POST['DS_MERCHANT_URLOK']           ?? null,
     'DS_MERCHANT_URLKO'           => $_POST['DS_MERCHANT_URLKO']           ?? null,
-    'DS_VERSION'                  => $_POST['DS_VERSION']                  ?? null,
+    'DS_URL_REDSYS'               => $_POST['DS_URL_REDSYS']                  ?? null,
     'DS_KC'                       => $_POST['DS_KC']                       ?? null,
 ];
 //Datos de configuración
 $order = $ds['DS_MERCHANT_ORDER'];
-$version = $ds['DS_VERSION'];
+$version = "HMAC_SHA512_V2";
 $kc = $ds['DS_KC'];
+$redsysActionUrl = $ds['DS_URL_REDSYS'];//'https://sis-t.redsys.es:25443/sis/realizarPago';
 // Se Rellenan los campos
 $data = array(
 	"DS_MERCHANT_AMOUNT"          => $ds['DS_MERCHANT_AMOUNT'],
@@ -37,8 +38,6 @@ $data = array(
 // Se generan los parámetros de la petición
 $params = Utils::base64_url_encode_safe(json_encode($data));
 $signature = Signature::createMerchantSignature($kc, $params, $order);
-
-$redsysActionUrl = 'https://sis-t.redsys.es:25443/sis/realizarPago';
 
 echo phpversion();
 ?>

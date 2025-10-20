@@ -82,7 +82,7 @@ $fields = [
     'DS_MERCHANT_MERCHANTURL',
     'DS_MERCHANT_URLOK',
     'DS_MERCHANT_URLKO',
-    'DS_VERSION',
+    'DS_URL_REDSYS',
     'DS_KC',
 ];
 
@@ -114,12 +114,12 @@ if ($hasDsKeys) {
     $mapped['DS_MERCHANT_MERCHANTURL']     = isset($data['merchantUrl']) ? (string)$data['merchantUrl'] : '';
     $mapped['DS_MERCHANT_URLOK']           = isset($data['urlOk']) ? (string)$data['urlOk'] : '';
     $mapped['DS_MERCHANT_URLKO']           = isset($data['urlKo']) ? (string)$data['urlKo'] : '';
-    $mapped['DS_VERSION']                  = isset($data['version']) ? (string)$data['version'] : '';
+    $mapped['DS_URL_REDSYS']               = isset($data['urlRedsys']) ? (string)$data['urlRedsys'] : '';
     $mapped['DS_KC']                       = isset($data['kc']) ? (string)$data['kc'] : '';
 }
 
 // Validación mínima
-$required = ['DS_MERCHANT_AMOUNT','DS_MERCHANT_ORDER','DS_MERCHANT_MERCHANTCODE','DS_VERSION','DS_KC'];
+$required = ['DS_MERCHANT_AMOUNT','DS_MERCHANT_ORDER','DS_MERCHANT_MERCHANTCODE','DS_URL_REDSYS','DS_KC'];
 foreach ($required as $req) {
     if (empty($mapped[$req])) {
         http_response_code(400);
