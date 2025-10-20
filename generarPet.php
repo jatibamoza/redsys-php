@@ -4,13 +4,6 @@ declare(strict_types=1);
 require_once __DIR__ . '/utils.php';
 require_once __DIR__ . '/signature.php';
 
-//Datos de configuración
-$version = "HMAC_SHA512_V2";
-//$kc = 'sq7HjrUOBfKmC576ILgskD5srU870gJ7'; //Clave recuperada de CANALES. JATC: EJEMPLO
-$kc = 'sq7HjrUOBfKmC576ILgskD5srU870gJ7';
-// Valores de entrada que no hemos cmbiado para ningun ejemplo
-//$fuc = "999008881"; //JATC: EJEMPLO
-
 $ds = [
     'DS_MERCHANT_AMOUNT'          => $_POST['DS_MERCHANT_AMOUNT']          ?? null,
     'DS_MERCHANT_ORDER'           => $_POST['DS_MERCHANT_ORDER']           ?? null,
@@ -21,8 +14,13 @@ $ds = [
     'DS_MERCHANT_MERCHANTURL'     => $_POST['DS_MERCHANT_MERCHANTURL']     ?? null,
     'DS_MERCHANT_URLOK'           => $_POST['DS_MERCHANT_URLOK']           ?? null,
     'DS_MERCHANT_URLKO'           => $_POST['DS_MERCHANT_URLKO']           ?? null,
+    'DS_VERSION'                  => $_POST['DS_VERSION']                  ?? null,
+    'DS_KC'                       => $_POST['DS_KC']                       ?? null,
 ];
+//Datos de configuración
 $order = $ds['DS_MERCHANT_ORDER'];
+$version = $ds['DS_VERSION'];
+$kc = $ds['DS_KC'];
 // Se Rellenan los campos
 $data = array(
 	"DS_MERCHANT_AMOUNT"          => $ds['DS_MERCHANT_AMOUNT'],
