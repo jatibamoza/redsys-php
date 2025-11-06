@@ -23,10 +23,16 @@ if (!headers_sent()) {
         exit('400 - HTTPS requerido.');
     }
 
-    // Bloquear XHR/fetch (traen Origin)
+    // Si viene Origin (algunos navegadores lo envían en POST de formulario), validar su host
     if ($origin !== '') {
-        http_response_code(403);
-        exit('403 - No se aceptan llamadas XHR/fetch.');
+        $oScheme = strtolower((string)parse_url($origin, PHP_URL_SCHEME));
+        $oHost   = strtolower((string)parse_url($origin, PHP_URL_HOST));
+        $oBase   = ($oScheme && $oHost) ? ($oScheme.'://'.$oHost) : '';
+        if (!in_array($oBase, $ALLOWED_BASES, true)) {
+            http_response_code(403);
+            exit('403 - Origin no permitido.');
+        }
+        // No devolvemos cabeceras CORS: no abrimos CORS
     }
 
     // Exigir POST
@@ -35,7 +41,7 @@ if (!headers_sent()) {
         exit('405 - Método no permitido.');
     }
 
-    // Validar Referer (host)
+    // Validar Referer (host) del formulario
     $scheme = strtolower((string)parse_url($referer, PHP_URL_SCHEME));
     $host   = strtolower((string)parse_url($referer, PHP_URL_HOST));
     $base   = ($scheme && $host) ? ($scheme.'://'.$host) : '';
