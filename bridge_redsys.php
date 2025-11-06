@@ -7,8 +7,12 @@ declare(strict_types=1);
 /* Solo aceptar formulario POST originado desde nuestras instancias Salesforce */
 if (!headers_sent()) {
     $ALLOWED_BASES = [
-        'https://laliga--uat.sandbox.my.salesforce.com', // Sandbox (Lightning)
-        'https://laliga.lightning.force.com',            // Producción (Lightning)
+        // UAT
+        'https://laliga--uat.sandbox.my.salesforce.com',
+        'https://laliga--uat.lightning.force.com',
+        // Producción
+        'https://laliga.lightning.force.com',
+        'https://laliga.my.salesforce.com',
     ];
 
     $origin   = $_SERVER['HTTP_ORIGIN']           ?? '';
@@ -23,31 +27,35 @@ if (!headers_sent()) {
         exit('400 - HTTPS requerido.');
     }
 
-    // Si viene Origin (algunos navegadores lo envían en POST de formulario), validar su host
-    if ($origin !== '') {
-        $oScheme = strtolower((string)parse_url($origin, PHP_URL_SCHEME));
-        $oHost   = strtolower((string)parse_url($origin, PHP_URL_HOST));
-        $oBase   = ($oScheme && $oHost) ? ($oScheme.'://'.$oHost) : '';
-        if (!in_array($oBase, $ALLOWED_BASES, true)) {
-            http_response_code(403);
-            exit('403 - Origin no permitido.');
-        }
-        // No devolvemos cabeceras CORS: no abrimos CORS
-    }
-
     // Exigir POST
     if ($method !== 'POST') {
         http_response_code(405);
         exit('405 - Método no permitido.');
     }
 
-    // Validar Referer (host) del formulario
-    $scheme = strtolower((string)parse_url($referer, PHP_URL_SCHEME));
-    $host   = strtolower((string)parse_url($referer, PHP_URL_HOST));
-    $base   = ($scheme && $host) ? ($scheme.'://'.$host) : '';
-    if (!in_array($base, $ALLOWED_BASES, true)) {
-        http_response_code(403);
-        exit('403 - Referer no permitido.');
+    // Base Referer
+    $rScheme = strtolower((string)parse_url($referer, PHP_URL_SCHEME));
+    $rHost   = strtolower((string)parse_url($referer, PHP_URL_HOST));
+    $rBase   = ($rScheme && $rHost) ? ($rScheme.'://'.$rHost) : '';
+
+    // Si viene Origin, validar host; si no coincide, aceptar si Referer sí está permitido
+    if ($origin !== '') {
+        $oScheme = strtolower((string)parse_url($origin, PHP_URL_SCHEME));
+        $oHost   = strtolower((string)parse_url($origin, PHP_URL_HOST));
+        $oBase   = ($oScheme && $oHost) ? ($oScheme.'://'.$oHost) : '';
+        $originAllowed  = in_array($oBase, $ALLOWED_BASES, true);
+        $refererAllowed = in_array($rBase, $ALLOWED_BASES, true);
+        if (!$originAllowed && !$refererAllowed) {
+            http_response_code(403);
+            exit('403 - Origin/Referer no permitido.');
+        }
+        // No devolvemos cabeceras CORS
+    } else {
+        // Sin Origin (form POST clásico): validar Referer
+        if (!in_array($rBase, $ALLOWED_BASES, true)) {
+            http_response_code(403);
+            exit('403 - Referer no permitido.');
+        }
     }
 }
 
