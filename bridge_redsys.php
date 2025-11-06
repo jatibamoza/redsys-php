@@ -6,13 +6,26 @@ declare(strict_types=1);
 
 /* Solo aceptar formulario POST originado desde nuestras instancias Salesforce */
 if (!headers_sent()) {
+    // Allow-list explícita
     $ALLOWED_BASES = [
         // UAT
         'https://laliga--uat.sandbox.my.salesforce.com',
         'https://laliga--uat.lightning.force.com',
+        'https://laliga--uat.sandbox.my.site.com',
+        'https://laliga--uat.force.com', // por si se usa site legacy
         // Producción
-        'https://laliga.lightning.force.com',
         'https://laliga.my.salesforce.com',
+        'https://laliga.lightning.force.com',
+        'https://laliga.my.site.com',
+        'https://laliga.force.com',      // por si se usa site legacy
+    ];
+
+    // Patrones para cubrir variantes equivalentes
+    $ALLOWED_REGEX = [
+        '#^https://laliga(?:--[a-z0-9-]+)?(?:\.sandbox)?\.my\.salesforce\.com$#i',
+        '#^https://laliga(?:--[a-z0-9-]+)?\.lightning\.force\.com$#i',
+        '#^https://laliga(?:--[a-z0-9-]+)?(?:\.sandbox)?\.my\.site\.com$#i',
+        '#^https://laliga(?:--[a-z0-9-]+)?\.force\.com$#i',
     ];
 
     $origin   = $_SERVER['HTTP_ORIGIN']           ?? '';
@@ -33,26 +46,33 @@ if (!headers_sent()) {
         exit('405 - Método no permitido.');
     }
 
-    // Base Referer
-    $rScheme = strtolower((string)parse_url($referer, PHP_URL_SCHEME));
-    $rHost   = strtolower((string)parse_url($referer, PHP_URL_HOST));
-    $rBase   = ($rScheme && $rHost) ? ($rScheme.'://'.$rHost) : '';
+    // Helpers
+    $toBase = function(string $url): string {
+        if ($url === '') return '';
+        $sch = strtolower((string)parse_url($url, PHP_URL_SCHEME));
+        $hst = strtolower((string)parse_url($url, PHP_URL_HOST));
+        return ($sch && $hst) ? ($sch.'://'.$hst) : '';
+    };
+    $isAllowed = function(string $base) use ($ALLOWED_BASES, $ALLOWED_REGEX): bool {
+        if ($base === '') return false;
+        if (in_array($base, $ALLOWED_BASES, true)) return true;
+        foreach ($ALLOWED_REGEX as $rx) { if (@preg_match($rx, $base)) return true; }
+        return false;
+    };
 
-    // Si viene Origin, validar host; si no coincide, aceptar si Referer sí está permitido
+    $oBase = $toBase($origin);
+    $rBase = $toBase($referer);
+
+    // Si viene Origin (los navegadores lo envían incluso en forms), permitir si Origin o Referer están en allow-list
     if ($origin !== '') {
-        $oScheme = strtolower((string)parse_url($origin, PHP_URL_SCHEME));
-        $oHost   = strtolower((string)parse_url($origin, PHP_URL_HOST));
-        $oBase   = ($oScheme && $oHost) ? ($oScheme.'://'.$oHost) : '';
-        $originAllowed  = in_array($oBase, $ALLOWED_BASES, true);
-        $refererAllowed = in_array($rBase, $ALLOWED_BASES, true);
-        if (!$originAllowed && !$refererAllowed) {
+        if (!$isAllowed($oBase) && !$isAllowed($rBase)) {
             http_response_code(403);
             exit('403 - Origin/Referer no permitido.');
         }
         // No devolvemos cabeceras CORS
     } else {
-        // Sin Origin (form POST clásico): validar Referer
-        if (!in_array($rBase, $ALLOWED_BASES, true)) {
+        // Sin Origin: validar por Referer
+        if (!$isAllowed($rBase)) {
             http_response_code(403);
             exit('403 - Referer no permitido.');
         }
@@ -64,19 +84,13 @@ function read_json_payload(): array {
     $raw = file_get_contents('php://input');
     if ($raw) {
         $decoded = json_decode($raw, true);
-        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
-            return $decoded;
-        }
+        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) return $decoded;
     }
     if (isset($_POST['payload'])) {
         $decoded = json_decode((string)$_POST['payload'], true);
-        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
-            return $decoded;
-        }
+        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) return $decoded;
     }
-    if (!empty($_POST)) {
-        return $_POST;
-    }
+    if (!empty($_POST)) return $_POST;
     return [];
 }
 
@@ -103,14 +117,10 @@ $fields = [
 
 $mapped = [];
 $hasDsKeys = false;
-foreach ($fields as $f) {
-    if (array_key_exists($f, $data)) { $hasDsKeys = true; break; }
-}
+foreach ($fields as $f) { if (array_key_exists($f, $data)) { $hasDsKeys = true; break; } }
 
 if ($hasDsKeys) {
-    foreach ($fields as $f) {
-        if (isset($data[$f])) $mapped[$f] = (string)$data[$f];
-    }
+    foreach ($fields as $f) { if (isset($data[$f])) $mapped[$f] = (string)$data[$f]; }
 } else {
     $mapped['DS_MERCHANT_AMOUNT']          = isset($data['amount']) ? (string)$data['amount'] : '';
     $mapped['DS_MERCHANT_ORDER']           = isset($data['order']) ? (string)$data['order'] : '';
